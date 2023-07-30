@@ -1,11 +1,16 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
+import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setName, setNumber } from 'redux/phoneBookReducer';
+import { selectContacts } from 'redux/selectors';
+import { addContact } from 'redux/contactsStorageReducer';
 
-export const ContactForm = ({ onAddContact }) => {
-  const name = useSelector(state => state.phoneBook.name);
-  const number = useSelector(state => state.phoneBook.number);
+export const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const contacts = useSelector(selectContacts);
 
   const dispatch = useDispatch();
 
@@ -13,21 +18,38 @@ export const ContactForm = ({ onAddContact }) => {
     const { name, value } = e.target;
     switch (name) {
       case 'name':
-        dispatch(setName(value));
+        setName(value);
         break;
       case 'number':
-        dispatch(setNumber(value));
+        setNumber(value);
         break;
       default:
         break;
     }
   };
 
+  const onAddContact = contactData => {
+    const comparison = contacts.find(
+      el => contactData.name.toLowerCase() === el.name.toLowerCase()
+    );
+
+    if (comparison) {
+      alert(`${contactData.name} is already in contacts!`);
+      return;
+    }
+
+    const contact = {
+      ...contactData,
+      id: nanoid(),
+    };
+    dispatch(addContact(contact));
+  };
+
   const handelSubmit = e => {
     e.preventDefault();
     onAddContact({ name, number });
-    dispatch(setName(''));
-    dispatch(setNumber(''));
+    setName('');
+    setNumber('');
   };
 
   return (
@@ -61,8 +83,4 @@ export const ContactForm = ({ onAddContact }) => {
       </button>
     </form>
   );
-};
-
-ContactForm.propTypes = {
-  onAddContact: PropTypes.func.isRequired,
 };

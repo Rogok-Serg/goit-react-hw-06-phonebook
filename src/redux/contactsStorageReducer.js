@@ -12,8 +12,13 @@ const contactsStorageSlice = createSlice({
   name: 'contactsStorage',
   initialState,
   reducers: {
-    setContacts: (state, action) => {
-      state.contacts = action.payload;
+    addContact: (state, action) => {
+      state.contacts = [...state.contacts, action.payload];
+    },
+    removeContact: (state, action) => {
+      state.contacts = state.contacts.filter(
+        contact => contact.id !== action.payload
+      );
     },
     setFilter: (state, action) => {
       state.filter = action.payload;
@@ -21,7 +26,8 @@ const contactsStorageSlice = createSlice({
   },
 });
 
-export const { setContacts, setFilter } = contactsStorageSlice.actions;
+export const { addContact, removeContact, setFilter } =
+  contactsStorageSlice.actions;
 export const contactsStorageReducer = contactsStorageSlice.reducer;
 
 // export const contactsStorageReducer = (state = initialState, action) => {

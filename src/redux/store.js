@@ -13,7 +13,6 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { phoneBookReducer } from './phoneBookReducer';
 import { contactsStorageReducer } from './contactsStorageReducer';
 
 const contactsStoragePersistConfig = {
@@ -24,7 +23,6 @@ const contactsStoragePersistConfig = {
 
 export const store = configureStore({
   reducer: {
-    phoneBook: phoneBookReducer,
     contactsStorage: persistReducer(
       contactsStoragePersistConfig,
       contactsStorageReducer
@@ -39,6 +37,7 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
 // const rootReducer = combineReducers({
 //   phoneBook: phoneBookReducer,
 //   contactsStorage: contactsStorageReducer,

@@ -1,29 +1,38 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import css from './ContactList.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts, selectFilter } from 'redux/selectors';
+import { removeContact } from 'redux/contactsStorageReducer';
 
-export const ContactList = ({ contacts, onRemoveContact }) => (
-  <ul className={css.list}>
-    {contacts.map(({ id, name, number }) => {
-      return (
-        <li className={css.items} key={id}>
-          <p>{name} </p>
-          <p>: {number}</p>
-          <button type="button" onClick={() => onRemoveContact(id)}>
-            Delete
-          </button>
-        </li>
-      );
-    })}
-  </ul>
-);
+export const ContactList = () => {
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onRemoveContact: PropTypes.func.isRequired,
+  const dispatch = useDispatch();
+
+  const onRemoveContact = contactId => dispatch(removeContact(contactId));
+
+  const getFilteredContacts = () => {
+    return contacts.filter(
+      contact =>
+        contact.name.toLowerCase().includes(filter.toLowerCase()) ||
+        contact.number.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
+
+  return (
+    <ul className={css.list}>
+      {getFilteredContacts().map(({ id, name, number }) => {
+        return (
+          <li className={css.items} key={id}>
+            <p>{name} </p>
+            <p>: {number}</p>
+            <button type="button" onClick={() => onRemoveContact(id)}>
+              Delete
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 };
